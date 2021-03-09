@@ -1,41 +1,56 @@
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/client'
+import { useSession, getSession } from 'next-auth/client'
 import withAuth from '../middleware/server/auth';
+import { useRouter } from 'next/router'
 
-const Dashboard: React.FC<{}> = () => {
+const Dashboard = () => {
+
     const [session, loading] = useSession()
     const [content, setContent] = useState();
+    console.log(session)
 
-    useEffect(() => {
+    const router = useRouter()
 
-        const data = async () => {
-            const res = await fetch("/api/dashboard")
-            const json = await res.json()
+    function Redirect({to}) {
+        const router = useRouter();
 
-            if (json.content) {
-                setContent(json.content)
-            }
-        }
-        data()
-    }, [session])
+        useEffect(() => {
 
-    if (typeof window !== 'undefined' && loading) return null
-
-    if (!session) {
-
-        return (
-            <div>
-                you are not signed in
-            </div>
-        )
+            router.push(to)
+        }, [to]);
+        return null;
     }
 
-    return (
-        <div>
-            hello you are signed in
-            {content}
-        </div>
-    )
-}
+ 
 
-export default withAuth(Dashboard)
+    if(session) {
+        return <div>
+                <p>hello you are signed in
+                {content}</p>
+                
+            </div>
+           
+        }
+    
+
+
+        if (!session) {
+            return <Redirect to='/' />
+        } 
+
+        
+
+
+          return <p>hi</p>  
+
+        }
+        export async function getServerSideProps(context) {
+            const session = await getSession(context)
+            return {
+              props: { session }
+            }
+          }
+        
+        
+
+export default Dashboard
