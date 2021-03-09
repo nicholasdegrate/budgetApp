@@ -3,11 +3,11 @@ import { useSession, getSession } from 'next-auth/client'
 import withAuth from '../middleware/server/auth';
 import { useRouter } from 'next/router'
 
-const Dashboard = () => {
+const Dashboard = (props) => {
 
     const [session, loading] = useSession()
     const [content, setContent] = useState();
-    console.log(session)
+    console.log('session', props)
 
     const router = useRouter()
 
